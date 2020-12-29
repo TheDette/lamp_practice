@@ -11,6 +11,9 @@ if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
 
+// CSRFへの対策のためのトークン生成
+$csrf_token = get_csrf_token();
+
 $db = get_db_connect();
 $user = get_login_user($db);
 

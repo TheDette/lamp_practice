@@ -20,16 +20,24 @@ if(is_admin($user) === false){
 
 $item_id = get_post('item_id');
 $changes_to = get_post('changes_to');
+$csrf_token = get_post('csrf_token');
 
-if($changes_to === 'open'){
-  update_item_status($db, $item_id, ITEM_STATUS_OPEN);
-  set_message('ステータスを変更しました。');
-}else if($changes_to === 'close'){
-  update_item_status($db, $item_id, ITEM_STATUS_CLOSE);
-  set_message('ステータスを変更しました。');
-}else {
+// トークンのチェック
+if(is_valid_csrf_token($csrf_token)){
+
+  // 指定商品のステータスを変更する処理
+  if($changes_to === 'open'){
+    update_item_status($db, $item_id, ITEM_STATUS_OPEN);
+    set_message('ステータスを変更しました。');
+  }else if($changes_to === 'close'){
+    update_item_status($db, $item_id, ITEM_STATUS_CLOSE);
+    set_message('ステータスを変更しました。');
+  }else {
+    set_error('不正なリクエストです。');
+  }
+
+} else {
   set_error('不正なリクエストです。');
 }
-
 
 redirect_to(ADMIN_URL);

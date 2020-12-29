@@ -25,11 +25,20 @@ $stock = get_post('stock');
 
 $image = get_file('image');
 
-if(regist_item($db, $name, $price, $stock, $status, $image)){
-  set_message('商品を登録しました。');
-}else {
-  set_error('商品の登録に失敗しました。');
-}
+$csrf_token = get_post('csrf_token');
 
+// トークンのチェック
+if(is_valid_csrf_token($csrf_token)){
+
+  // 新規商品を登録する処理
+  if(regist_item($db, $name, $price, $stock, $status, $image)){
+    set_message('商品を登録しました。');
+  }else {
+    set_error('商品の登録に失敗しました。');
+  }
+
+} else {
+  set_error('不正なリクエストです。');
+}
 
 redirect_to(ADMIN_URL);
