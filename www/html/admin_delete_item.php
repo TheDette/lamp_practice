@@ -25,7 +25,7 @@ $csrf_token = get_post('csrf_token');
 if(is_valid_csrf_token($csrf_token)){
 
   // 指定商品情報を削除する処理
-  if(destroy_item($db, $item_id) === true){
+  if(destroy_item($db, $item_id)){
     set_message('商品を削除しました。');
   } else {
     set_error('商品削除に失敗しました。');

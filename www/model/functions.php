@@ -150,9 +150,10 @@ function get_csrf_token(){
 
 // トークンのチェック
 function is_valid_csrf_token($token){
-  if($token === ''){
+  // get_session()はユーザー定義関数
+  if($token === get_session('csrf_token')){
+    return true;
+  } else {
     return false;
   }
-  // get_session()はユーザー定義関数
-  return $token === get_session('csrf_token');
 }
