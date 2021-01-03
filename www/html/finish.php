@@ -22,7 +22,7 @@ $csrf_token = get_post('csrf_token');
 if(is_valid_csrf_token($csrf_token)){
 
   // 購入処理
-  if(purchase_carts($db, $carts) === false){
+  if(!(purchase_carts($db, $carts))){
     set_error('商品が購入できませんでした。');
     redirect_to(CART_URL);
   }
