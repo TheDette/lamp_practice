@@ -16,11 +16,20 @@ $user = get_login_user($db);
 
 
 $item_id = get_post('item_id');
+$csrf_token = get_post('csrf_token');
 
-if(add_cart($db,$user['user_id'], $item_id)){
-  set_message('カートに商品を追加しました。');
+// トークンのチェック
+if(is_valid_csrf_token($csrf_token)){
+
+  // カート内に商品を追加する処理
+  if(add_cart($db,$user['user_id'], $item_id)){
+    set_message('カートに商品を追加しました。');
+  } else {
+    set_error('カートの更新に失敗しました。');
+  }
+  
 } else {
-  set_error('カートの更新に失敗しました。');
+  set_error('不正なリクエストです。');
 }
 
 redirect_to(HOME_URL);
