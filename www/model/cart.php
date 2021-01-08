@@ -119,9 +119,9 @@ function purchase_carts($db, $carts){
     }
     foreach($carts as $cart){
       // 購入した商品の在庫数を減らす処理
-      if(!(update_item_stock($db, $cart['item_id'], $cart['stock'] - $cart['amount'])) &&
+      if(!(update_item_stock($db, $cart['item_id'], $cart['stock'] - $cart['amount'])) ||
       // 購入した商品と購入数を記録する処理
-      !(insert_purchase_historys($db, $order_id, $cart['item_id'], $cart['amount']))
+      !(insert_purchases($db, $order_id, $cart['item_id'], $cart['price'], $cart['amount']))
       ){
         $db->rollback();
         return false;
@@ -150,7 +150,7 @@ function delete_user_carts($db, $user_id){
       user_id = ?
   ";
 
-  execute_query($db, $sql, [$user_id]);
+  return execute_query($db, $sql, [$user_id]);
 }
 
 
@@ -199,16 +199,17 @@ function insert_orders($db, $user_id){
 }
 
 // purchase_historysテーブルにデータを登録する関数
-function insert_purchase_historys($db, $order_id, $item_id, $amount){
+function insert_purchases($db, $order_id, $item_id, $price, $amount){
   $sql = "
     INSERT INTO
-    purchase_historys(
+    purchases(
         order_id,
         item_id,
+        price,
         amount
       )
-    VALUES(?, ?, ?)
+    VALUES(?, ?, ?, ?)
   ";
 
-  return execute_query($db, $sql, [$order_id, $item_id, $amount]);
+  return execute_query($db, $sql, [$order_id, $item_id, $price, $amount]);
 }
