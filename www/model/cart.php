@@ -101,21 +101,45 @@ function delete_cart($db, $cart_id){
   return execute_query($db, $sql, [$cart_id]);
 }
 
+// 購入処理をする関数
 function purchase_carts($db, $carts){
-  if(validate_cart_purchase($carts) === false){
+  // トランザクション処理
+  $db->beginTransaction();
+  try{
+    // 商品が非公開、購入数に対して在庫数が足りているかチェック
+    if(!(validate_cart_purchase($carts))){
+      $db->rollback();
+      return false;
+    }
+    // 購入したユーザーと購入日時を記録する処理
+    $order_id = insert_orders($db, $carts[0]['user_id']);
+    if($order_id === false){
+      $db->rollback();
+      return false;
+    }
+    foreach($carts as $cart){
+      // 購入した商品の在庫数を減らす処理
+      if(!(update_item_stock($db, $cart['item_id'], $cart['stock'] - $cart['amount'])) &&
+      // 購入した商品と購入数を記録する処理
+      !(insert_purchase_historys($db, $order_id, $cart['item_id'], $cart['amount']))
+      ){
+        $db->rollback();
+        return false;
+      }
+    }
+    // カート内の商品データを削除する処理
+    if(!(delete_user_carts($db, $carts[0]['user_id']))){
+      $db->rollback();
+      return false;
+    }
+    // コミット処理
+    $db->commit();
+    return true;
+  } catch (PDOException $e) {
+    // ロールバック処理
+    $db->rollback();
     return false;
   }
-  foreach($carts as $cart){
-    if(update_item_stock(
-        $db, 
-        $cart['item_id'], 
-        $cart['stock'] - $cart['amount']
-      ) === false){
-      set_error($cart['name'] . 'の購入に失敗しました。');
-    }
-  }
-  
-  delete_user_carts($db, $carts[0]['user_id']);
 }
 
 function delete_user_carts($db, $user_id){
@@ -157,3 +181,34 @@ function validate_cart_purchase($carts){
   return true;
 }
 
+// ordersテーブルにデータを登録する関数
+function insert_orders($db, $user_id){
+  $sql = "
+    INSERT INTO
+      orders(
+        user_id
+      )
+    VALUES(?)
+  ";
+
+  if(execute_query($db, $sql, [$user_id])){
+    return $db->lastInsertId();
+  } else {
+    return false;
+  }
+}
+
+// purchase_historysテーブルにデータを登録する関数
+function insert_purchase_historys($db, $order_id, $item_id, $amount){
+  $sql = "
+    INSERT INTO
+    purchase_historys(
+        order_id,
+        item_id,
+        amount
+      )
+    VALUES(?, ?, ?)
+  ";
+
+  return execute_query($db, $sql, [$order_id, $item_id, $amount]);
+}
