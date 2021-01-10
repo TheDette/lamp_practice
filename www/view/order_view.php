@@ -28,7 +28,7 @@
             <?php $order_id = $order['order_id']; ?>
             <!-- 合計金額の初期化 -->
             <?php $total_price = 0; ?>
-            <td><?php print(h($order['order_id'])); ?></td>
+            <td><?php print(h($order_id)); ?></td>
             <td><?php print(h($order['created'])); ?></td>
 
             <!-- 注文番号が同じ購入商品の合計金額を計算する -->

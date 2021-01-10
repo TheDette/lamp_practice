@@ -31,10 +31,10 @@ if(is_valid_csrf_token($csrf_token)){
   // 該当の注文番号の購入明細を取得する処理
   $details = get_order_details($db, $order_id);
   
-  } else {
-    set_error('不正なリクエストです。');
-    redirect_to(ORDER_URL);
-  }
+} else {
+  set_error('不正なリクエストです。');
+  redirect_to(ORDER_URL);
+}
 
 // 購入履歴ビューファイルの読み込み
 include_once VIEW_PATH . 'details_view.php';

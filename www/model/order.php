@@ -46,8 +46,8 @@ function get_all_purchases($db){
   return fetch_all_query($db, $sql);
 }
   
-// DBから指定の注文番号の商品価格、購入数を取得する関数
-function get_purchases($db, $order_id){
+// IN句に指定した複数の注文番号の商品価格、購入数を取得する関数
+function get_in_purchases($db, $in){
   $sql = "
     SELECT
       order_id,
@@ -56,23 +56,13 @@ function get_purchases($db, $order_id){
     FROM
       purchases
     WHERE
-      order_id = ?
+      order_id
+    IN(
+      $in
+    )
   ";
   
-  return fetch_all_query($db, $sql, [$order_id]);
-}
-
-// ログインユーザーの注文番号ごとの購入履歴データを取得する関数
-function get_user_purchases($db, $orders){
-  $purchases = array();
-  // 注文番号を一つずつ抽出
-  foreach($orders as $order){
-    // 指定の注文番号の商品価格、購入数を取得する
-    $purchase = get_purchases($db, $order['order_id']);
-    // ↑で取得したデータを$purchases変数にarray_merge関数で合わせる
-    $purchases = array_merge($purchases, $purchase);
-  }
-  return $purchases;
+  return fetch_all_query($db, $sql);
 }
 
 // 注文番号の商品データを取得する関数
@@ -96,4 +86,21 @@ function get_order_details($db, $order_id){
   ";
 
   return fetch_all_query($db, $sql, [$order_id]);
+}
+
+// DBから指定の注文番号の商品価格、購入数を取得する関数
+function get_user_purchases($db, $orders){
+  // 連想配列で格納された複数の注文番号を文字列連結させ、変数$inに格納する
+  $in = link_order_id($orders);
+  // purchasesテーブルから指定の注文番号の商品価格、購入数を取得して返す
+  return get_in_purchases($db, $in);
+}  
+
+// 連想配列で格納された複数の注文番号を一つの変数に連結し格納させる関数
+function link_order_id($orders) {
+  foreach($orders as $order){
+    $in .= $order['order_id'] . ",";
+  }
+  // 連結させた文字列の末尾","を削除して返す
+  return rtrim($in, ",");
 }

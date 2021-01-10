@@ -51,14 +51,11 @@
         <tbody>
           <?php foreach($details as $detail){ ?>
           <tr>
-            <?php $total_price = 0; ?>
             <td><?php print(h($detail['name'])); ?></td>
             <td><?php print(h($detail['price'])); ?></td>
             <td><?php print(h($detail['amount'])); ?></td>
-            <!-- 小計を計算 -->
-            <?php $total_price = $detail['price'] * $detail['amount']; ?>
             <!-- 小計を表示 -->
-            <td><?php print number_format(h($total_price)); ?>円</td>
+            <td><?php print number_format(h($detail['price'] * $detail['amount'])); ?></td>
           </tr>
            <?php } ?>
         </tbody>

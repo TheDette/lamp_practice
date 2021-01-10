@@ -198,7 +198,7 @@ function insert_orders($db, $user_id){
   }
 }
 
-// purchase_historysテーブルにデータを登録する関数
+// purchasesテーブルにデータを登録する関数
 function insert_purchases($db, $order_id, $item_id, $price, $amount){
   $sql = "
     INSERT INTO
