@@ -12,6 +12,17 @@
 
   <div class="container">
     <h1>商品一覧</h1>
+
+    <form action="index_sort.php" method="get">
+      <p>商品の並べ替え
+        <select id="sort" name="sort" class="form-control">
+          <option value="1" selected>新着順</option>
+          <option value="2" <?php if($sort === '2'){ print "selected"; } ?>>価格の安い順</option>
+          <option value="3" <?php if($sort === '3'){ print "selected"; } ?>>価格の高い順</option>
+        </select>
+      </p>
+    </form>
+
     <?php include VIEW_PATH . 'templates/messages.php'; ?>
 
     <div class="card-deck">
@@ -43,6 +54,10 @@
       </div>
     </div>
   </div>
-  
+  <script>
+    $('#sort').on('change', function(){
+      $(this).closest('form').submit();
+    });
+  </script>
 </body>
 </html>
