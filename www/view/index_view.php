@@ -16,7 +16,7 @@
     <form action="index_sort.php" method="get">
       <p>商品の並べ替え
         <select id="sort" name="sort" class="form-control">
-          <option value="1" <?php if($sort === '1'){ print "selected"; } ?>>新着順</option>
+          <option value="1" selected>新着順</option>
           <option value="2" <?php if($sort === '2'){ print "selected"; } ?>>価格の安い順</option>
           <option value="3" <?php if($sort === '3'){ print "selected"; } ?>>価格の高い順</option>
         </select>

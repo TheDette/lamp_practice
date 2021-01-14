@@ -63,14 +63,16 @@ function get_sort_items($db, $sort){
 
 // getメソッドから取得した値によって、ORDER BYに指定するカラム値を決める関数
 function order_by($sort){
-  if($sort === '1'){
-    return 'created DESC';
-  }
-  if($sort === '2'){
-    return 'price';
-  }
-  if($sort === '3'){
-    return 'price DESC';
+  switch($sort){
+    case '1':
+      return 'created DESC';
+      break;
+    case '2':
+      return 'price';
+      break;
+    case '3':
+      return 'price DESC';
+      break;
   }
 }
 
