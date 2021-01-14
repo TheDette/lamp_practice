@@ -22,7 +22,7 @@ function get_item($db, $item_id){
   return fetch_query($db, $sql, [$item_id]);
 }
 
-function get_items($db, $is_open = false){
+function get_items($db, $is_open = false, $sort = 'created'){
   $sql = '
     SELECT
       item_id, 
@@ -39,6 +39,10 @@ function get_items($db, $is_open = false){
       WHERE status = 1
     ';
   }
+  $sql .= '
+    ORDER BY
+       ' . $sort . '
+  ';
 
   return fetch_all_query($db, $sql);
 }
@@ -48,7 +52,26 @@ function get_all_items($db){
 }
 
 function get_open_items($db){
-  return get_items($db, true);
+  return get_items($db, true, 'created DESC');
+}
+
+// 商品表示の並べ替えをする処理
+function get_sort_items($db, $sort){
+  // $sortに応じた並べ替えをした商品データを取得する
+  return get_items($db, true, order_by($sort));
+}
+
+// getメソッドから取得した値によって、ORDER BYに指定するカラム値を決める関数
+function order_by($sort){
+  if($sort === '1'){
+    return 'created DESC';
+  }
+  if($sort === '2'){
+    return 'price';
+  }
+  if($sort === '3'){
+    return 'price DESC';
+  }
 }
 
 function regist_item($db, $name, $price, $stock, $status, $image){

@@ -18,4 +18,7 @@ $user = get_login_user($db);
 
 $items = get_open_items($db);
 
+// 並べ替えの選択状態の初期設定（新着順）
+$sort = '1';
+
 include_once VIEW_PATH . 'index_view.php';
